@@ -1,76 +1,92 @@
 window.QUESTIONS = [
   {
     id: "Fase 1 — Mediastino",
-    prompt: "O coração localiza-se predominantemente em qual compartimento do mediastino?",
-    options: ["A) Mediastino superior","B) Mediastino anterior","C) Mediastino médio","D) Mediastino posterior","E) Cavidade pleural esquerda"],
+    [span_2](start_span)prompt: "O coração localiza-se predominantemente em qual compartimento do mediastino?[span_2](end_span)",
+    options: [
+      "A) Mediastino superior",
+      "B) Mediastino anterior",
+      "C) Mediastino médio",
+      "D) Mediastino posterior",
+      "E) Cavidade pleural esquerda"
+    ],
     answer: "C",
-    explain: "O coração fica no mediastino médio, dentro do pericárdio.",
+    explain: "Correto! [span_3](start_span)O coração localiza-se no mediastino médio, envolto pelo saco pericárdico.[span_3](end_span)",
     image: "q1_mediastino.png",
     main: true
   },
   {
     id: "Fase 2 — Irrigação coronariana",
-    prompt: "A artéria interventricular anterior é ramo direto da:",
-    options: ["A) Artéria coronária direita","B) Artéria coronária esquerda","C) Artéria circunflexa","D) Artéria torácica interna","E) Aorta descendente"],
+    [span_4](start_span)prompt: "A artéria interventricular anterior é ramo direto da:[span_4](end_span)",
+    options: [
+      "A) Artéria coronária direita",
+      "B) Artéria coronária esquerda",
+      "C) Artéria circunflexa",
+      "D) Artéria torácica interna",
+      "E) Aorta descendente"
+    ],
     answer: "B",
-    explain: "A interventricular anterior (LAD/DA) é ramo da coronária esquerda.",
+    explain: "Exato! [span_5](start_span)A artéria coronária esquerda se divide em ramos circunflexo e interventricular anterior.[span_5](end_span)",
     image: "q2_coronarias.png",
     main: true
   },
   {
     id: "Fase 3 — Hilo pulmonar",
-    prompt: "No hilo pulmonar, a estrutura mais posterior em relação às demais é:",
-    options: ["A) Artéria pulmonar","B) Veias pulmonares","C) Brônquio principal","D) Nervo frênico","E) Linfonodos"],
+    [span_6](start_span)prompt: "No hilo pulmonar, a estrutura que se localiza mais posteriormente em relação às demais é:[span_6](end_span)",
+    options: [
+      "A) Artéria pulmonar",
+      "B) Veias pulmonares",
+      "C) Brônquio principal",
+      "D) Nervo frênico",
+      "E) Linfonodos"
+    ],
     answer: "C",
-    explain: "No hilo, o brônquio principal tende a estar mais posterior.",
+    explain: "Correto! [span_7](start_span)No hilo pulmonar, os brônquios ocupam a posição mais posterior.[span_7](end_span)",
     image: "q3_hilo.png",
     main: true
   },
   {
     id: "Fase 4 — Valvas cardíacas",
-    prompt: "A valva atrioventricular direita está localizada entre:",
-    options: ["A) Átrio esquerdo e ventrículo esquerdo","B) Ventrículo esquerdo e aorta","C) Átrio direito e ventrículo direito","D) Átrio direito e veia cava superior","E) Ventrículo direito e tronco pulmonar"],
+    [span_8](start_span)prompt: "A valva atrioventricular direita (tricúspide) está localizada entre:[span_8](end_span)",
+    options: [
+      "A) Átrio esquerdo e ventrículo esquerdo",
+      "B) Ventrículo esquerdo e aorta",
+      "C) Átrio direito e ventrículo direito",
+      "D) Átrio direito e veia cava superior",
+      "E) Ventrículo direito e tronco pulmonar"
+    ],
     answer: "C",
-    explain: "AV direita = tricúspide (AD ↔ VD).",
+    explain: "Muito bem! [span_9](start_span)[span_10](start_span)A valva atrioventricular direita comunica o AD com o VD.[span_9](end_span)[span_10](end_span)",
     image: "q4_valvas.png",
     main: true
   },
   {
     id: "Fase 5 — Pleuras",
-    prompt: "A pleura que reveste diretamente a superfície do pulmão e acompanha suas fissuras é denominada:",
-    options: ["A) Pleura parietal costal","B) Pleura mediastinal","C) Pleura diafragmática","D) Pleura visceral","E) Endotélio pleural"],
+    [span_11](start_span)prompt: "A pleura que reveste diretamente a superfície do pulmão e acompanha suas fissuras é denominada:[span_11](end_span)",
+    options: [
+      "A) Pleura parietal costal",
+      "B) Pleura mediastinal",
+      "C) Pleura diafragmática",
+      "D) Pleura visceral",
+      "E) Endotélio pleural"
+    ],
     answer: "D",
-    explain: "A pleura visceral está aderida ao pulmão e entra nas fissuras.",
+    explain: "Correto! [span_12](start_span)A pleura visceral está em contato direto com o parênquima pulmonar.[span_12](end_span)",
     image: "q5_pleura.png",
     main: true
   },
-
-  // BÔNUS (se quiser usar também)
   {
     id: "Bônus 1 — Árvore brônquica",
-    prompt: "O brônquio principal direito é mais frequentemente associado a maior risco de aspiração porque é:",
-    options: ["A) Mais longo, mais estreito e horizontal","B) Mais curto, mais largo e mais vertical","C) Mais curto, mais estreito e oblíquo","D) Mais longo, mais largo e vertical","E) Igual ao esquerdo em calibre e inclinação"],
+    [span_13](start_span)prompt: "Por que o brônquio principal direito tem maior risco de aspiração de corpos estranhos?[span_13](end_span)",
+    options: [
+      "A) É mais longo, estreito e horizontal",
+      "B) É mais curto, largo e vertical",
+      "C) É mais curto, estreito e oblíquo",
+      "D) É mais longo, largo e vertical",
+      "E) É idêntico ao esquerdo"
+    ],
     answer: "B",
-    explain: "Direito = mais curto, mais largo e mais vertical.",
+    explain: "Correto! [span_14](start_span)[span_15](start_span)Sua anatomia mais vertical e larga facilita a passagem de objetos aspirados.[span_14](end_span)[span_15](end_span)",
     image: "bonus1_bronquio_direito.png",
-    main: false
-  },
-  {
-    id: "Bônus 2 — Superfícies cardíacas",
-    prompt: "A face esternocostal (anterior) do coração é formada predominantemente por:",
-    options: ["A) Átrio esquerdo","B) Ventrículo esquerdo","C) Átrio direito","D) Ventrículo direito","E) Tronco pulmonar"],
-    answer: "D",
-    explain: "A face anterior do coração é predominantemente do ventrículo direito.",
-    image: "bonus2_face_esternocostal.png",
-    main: false
-  },
-  {
-    id: "Bônus 3 — Nó AV (topografia)",
-    prompt: "O nó atrioventricular localiza-se anatomicamente:",
-    options: ["A) No teto do átrio direito, próximo à veia cava superior","B) No septo interatrial, próximo ao óstio do seio coronário","C) Na parede livre do ventrículo direito","D) No sulco interventricular anterior","E) No ápice cardíaco"],
-    answer: "B",
-    explain: "Nó AV: septo interatrial, próximo ao óstio do seio coronário.",
-    image: "bonus3_no_av.png",
     main: false
   }
 ];
