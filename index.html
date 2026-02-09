@@ -1,73 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>CardioResp Escape (Mobile)</title>
+  
   <link rel="stylesheet" href="assets/css/style.css"/>
+  
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 </head>
 <body>
   <header class="top">
-    <div class="title">CardioResp Escape</div>
-    <div class="hud" id="hud">Carregando…</div>
+    <div class="title">🫀 CardioResp Escape</div>
+    <div class="hud" id="hud">Carregando ambiente...</div>
   </header>
 
   <main class="stage">
-    <div id="game"></div>
+    <div id="game-container"></div>
 
-    <!-- Controles mobile -->
-    <div class="mobile">
-      <div class="pad">
-        <button class="btn" id="up">▲</button>
-        <div class="row">
-          <button class="btn" id="left">◀</button>
-          <button class="btn" id="down">▼</button>
-          <button class="btn" id="right">▶</button>
+    <div class="mobile-controls">
+      <div class="d-pad">
+        <button class="btn-control" id="up" aria-label="Mover para cima">▲</button>
+        <div class="d-pad-row">
+          <button class="btn-control" id="left" aria-label="Mover para esquerda">◀</button>
+          <button class="btn-control" id="down" aria-label="Mover para baixo">▼</button>
+          <button class="btn-control" id="right" aria-label="Mover para direita">▶</button>
         </div>
       </div>
-      <div class="actions">
-        <button class="btn big" id="interact">E</button>
+      <div class="action-buttons">
+        <button class="btn-control btn-action" id="interact" aria-label="Interagir">E</button>
       </div>
     </div>
   </main>
 
-  <!-- Modal de pergunta -->
   <div class="modal hidden" id="qModal">
-    <div class="card">
-      <div class="cardTop">
-        <div class="badge" id="qBadge"></div>
-        <button class="x" id="qClose">✕</button>
+    <div class="card-modal">
+      <div class="card-header">
+        <span class="badge" id="qBadge">Fase 1</span>
+        <button class="close-btn" id="qClose">&times;</button>
       </div>
 
-      <div class="grid">
-        <div class="imgWrap">
-          <img id="qImg" alt="imagem da questão"/>
+      <div class="modal-body-grid">
+        <div class="image-container">
+          <img id="qImg" src="" alt="Diagrama Anatômico"/>
         </div>
-        <div class="content">
-          <h2 id="qTitle"></h2>
-          <p id="qPrompt"></p>
-          <div id="qOptions" class="opts"></div>
-          <div id="qFeedback" class="feedback"></div>
+        <div class="question-content">
+          <h2 id="qTitle">Anatomia</h2>
+          <p id="qPrompt">Carregando pergunta...</p>
+          <div id="qOptions" class="options-grid"></div>
+          <div id="qFeedback" class="feedback-area"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal do teclado -->
   <div class="modal hidden" id="kModal">
-    <div class="card small">
-      <div class="cardTop">
-        <div class="badge">TECLADO DA PORTA</div>
-        <button class="x" id="kClose">✕</button>
+    <div class="card-modal small-card">
+      <div class="card-header">
+        <span class="badge">SISTEMA DE SEGURANÇA</span>
+        <button class="close-btn" id="kClose">&times;</button>
       </div>
-      <div class="kDisplay" id="kDisplay"></div>
-      <div class="kpad" id="kPad"></div>
-      <div class="kHelp" id="kHelp"></div>
+      <div class="keypad-display" id="kDisplay">____</div>
+      <div class="keypad-grid" id="kPad">
+        </div>
+      <div class="keypad-hint" id="kHelp">Insira o código obtido nas fases</div>
     </div>
   </div>
 
-  <script src="assets/js/questions.js"></script>
-  <script src="assets/js/main.js"></script>
-</body>
+  <script src="assets/js/questions.js"></script> <script src="assets/js/main.js"></script>      </body>
 </html>
