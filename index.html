@@ -2,33 +2,72 @@
 <html lang="pt-br">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>CardioResp Escape</title>
-  <style>
-    body{font-family:Arial, sans-serif; margin:40px; max-width:900px}
-    .card{border:1px solid #ddd; border-radius:14px; padding:18px}
-    code{background:#f5f5f5; padding:2px 6px; border-radius:6px}
-    a.btn{display:inline-block; padding:10px 14px; border-radius:10px; border:1px solid #111; text-decoration:none}
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <title>CardioResp Escape (Mobile)</title>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
 </head>
 <body>
-  <h1>CardioResp Escape</h1>
-  <div class="card">
-    <p>Este jogo foi feito em <b>Python + Pygame</b> e roda no computador.</p>
+  <header class="top">
+    <div class="title">CardioResp Escape</div>
+    <div class="hud" id="hud">Carregando…</div>
+  </header>
 
-    <h3>Como rodar</h3>
-    <ol>
-      <li>Baixe o projeto (ZIP) do GitHub.</li>
-      <li>Abra a pasta no Windows.</li>
-      <li>Crie ambiente virtual e instale dependências.</li>
-      <li>Rode: <code>python main.py</code></li>
-    </ol>
+  <main class="stage">
+    <div id="game"></div>
 
-    <h3>Links</h3>
-    <p>
-      <a class="btn" href="https://github.com/pinheiro767/CardioRespEscape" target="_blank">Abrir repositório</a>
-    </p>
-    <p><small>Obs.: GitHub Pages não executa Python, por isso o jogo não roda direto no navegador.</small></p>
+    <!-- Controles mobile -->
+    <div class="mobile">
+      <div class="pad">
+        <button class="btn" id="up">▲</button>
+        <div class="row">
+          <button class="btn" id="left">◀</button>
+          <button class="btn" id="down">▼</button>
+          <button class="btn" id="right">▶</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn big" id="interact">E</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de pergunta -->
+  <div class="modal hidden" id="qModal">
+    <div class="card">
+      <div class="cardTop">
+        <div class="badge" id="qBadge"></div>
+        <button class="x" id="qClose">✕</button>
+      </div>
+
+      <div class="grid">
+        <div class="imgWrap">
+          <img id="qImg" alt="imagem da questão"/>
+        </div>
+        <div class="content">
+          <h2 id="qTitle"></h2>
+          <p id="qPrompt"></p>
+          <div id="qOptions" class="opts"></div>
+          <div id="qFeedback" class="feedback"></div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Modal do teclado -->
+  <div class="modal hidden" id="kModal">
+    <div class="card small">
+      <div class="cardTop">
+        <div class="badge">TECLADO DA PORTA</div>
+        <button class="x" id="kClose">✕</button>
+      </div>
+      <div class="kDisplay" id="kDisplay"></div>
+      <div class="kpad" id="kPad"></div>
+      <div class="kHelp" id="kHelp"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/questions.js"></script>
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
