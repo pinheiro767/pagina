@@ -1,71 +1,919 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>CardioResp Escape (Mobile)</title>
-  
-  <link rel="stylesheet" href="assets/css/style.css"/>
-  
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
-</head>
-<body>
-  <header class="top">
-    <div class="title">🫀 CardioResp Escape</div>
-    <div class="hud" id="hud">Carregando ambiente...</div>
-  </header>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CardioResp Escape - Image Edition</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&amp;family=VT323&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <main class="stage">
-    <div id="game-container"></div>
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+    }
 
-    <div class="mobile-controls">
-      <div class="d-pad">
-        <button class="btn-control" id="up" aria-label="Mover para cima">▲</button>
-        <div class="d-pad-row">
-          <button class="btn-control" id="left" aria-label="Mover para esquerda">◀</button>
-          <button class="btn-control" id="down" aria-label="Mover para baixo">▼</button>
-          <button class="btn-control" id="right" aria-label="Mover para direita">▶</button>
-        </div>
-      </div>
-      <div class="action-buttons">
-        <button class="btn-control btn-action" id="interact" aria-label="Interagir">E</button>
-      </div>
+    body {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f2a4a 100%);
+      color: #fff;
+      box-sizing: border-box;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hud-bar {
+      background: linear-gradient(90deg, #e91e63 0%, #ff1744 50%, #d32f2f 100%);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(233, 30, 99, 0.5);
+      flex-shrink: 0;
+      gap: 20px;
+    }
+
+    .hud-title {
+      font-size: 16px;
+      font-weight: 900;
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: 2px;
+    }
+
+    .hud-stats {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .stat-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 6px 14px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .game-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-viewport {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(180deg, #1a2a4a 0%, #0d1b3a 50%, #0a0f25 100%);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 20px;
+      padding: 30px;
+      align-content: center;
+      justify-content: center;
+    }
+
+    .question-card {
+      background: linear-gradient(135deg, #1a3a5a, #0d2a4a);
+      border: 3px solid #00bcd4;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(77, 208, 225, 0.2) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .question-card:hover {
+      transform: translateY(-8px) scale(1.05);
+      border-color: #4dd0e1;
+      box-shadow: 0 12px 32px rgba(0, 188, 212, 0.5);
+    }
+
+    .question-card:hover::before {
+      opacity: 1;
+    }
+
+    .question-card.completed {
+      border-color: #4caf50;
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(76, 175, 80, 0.1));
+      pointer-events: none;
+    }
+
+    .question-card.bonus {
+      border-color: #ff9800;
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      color: #4dd0e1;
+      font-weight: bold;
+      z-index: 2;
+      line-height: 1.2;
+    }
+
+    .card-status {
+      font-size: 11px;
+      color: #888;
+    }
+
+    .controls-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      gap: 20px;
+      flex-shrink: 0;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(0px);
+      padding: 20px;
+    }
+
+    .modal.open {
+      opacity: 1;
+      visibility: visible;
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background: linear-gradient(145deg, #1a2a4a, #0d1b3a);
+      border: 2px solid #00bcd4;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 188, 212, 0.25);
+      animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 2px solid #00bcd4;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      background: linear-gradient(90deg, #e91e63, #ff1744);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: #e91e63;
+    }
+
+    .modal-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .question-image-container {
+      width: 100%;
+      height: 250px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid #00bcd4;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .question-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .question-title {
+      color: #4dd0e1;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .question-text {
+      color: #ccc;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      padding: 12px 16px;
+      background: rgba(45, 74, 111, 0.5);
+      border: 2px solid #0d4a6a;
+      border-radius: 10px;
+      color: #fff;
+      text-align: left;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Orbitron', sans-serif;
+      word-break: break-word;
+    }
+
+    .option-btn:hover {
+      background: rgba(77, 208, 225, 0.2);
+      border-color: #00bcd4;
+      transform: translateX(4px);
+    }
+
+    .option-btn.correct {
+      background: rgba(76, 175, 80, 0.3);
+      border-color: #4caf50;
+    }
+
+    .option-btn.wrong {
+      background: rgba(233, 30, 99, 0.3);
+      border-color: #e91e63;
+    }
+
+    .option-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4caf50;
+      color: #81c784;
+    }
+
+    .feedback.wrong {
+      background: rgba(233, 30, 99, 0.2);
+      border: 1px solid #e91e63;
+      color: #ec407a;
+    }
+
+    /* Robot Animation */
+    .robot-collection {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 180;
+    }
+
+    .robot-collector {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+      animation: robot-bounce 0.6s ease-in-out forwards;
+      border: 2px solid #4dd0e1;
+    }
+
+    @keyframes robot-bounce {
+      0% { transform: scale(0) translateY(100px); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .robot-tip {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 16px 20px;
+      border-radius: 16px;
+      max-width: 280px;
+      font-size: 12px;
+      z-index: 180;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+      animation: tip-slide-in 0.4s ease-out;
+      border-left: 4px solid #4dd0e1;
+    }
+
+    @keyframes tip-slide-in {
+      from { transform: translateX(400px) translateY(20px); opacity: 0; }
+      to { transform: translateX(0) translateY(0); opacity: 1; }
+    }
+
+    .robot-tip strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #4dd0e1;
+    }
+
+    /* Video Modal */
+    .video-player {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    /* Victory Modal */
+    .victory-content {
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .victory-emoji {
+      font-size: 80px;
+      margin-bottom: 16px;
+      animation: bounce-victory 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce-victory {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .victory-title {
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+      color: #4dd0e1;
+      margin-bottom: 12px;
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: 2px;
+    }
+
+    .victory-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .victory-stat {
+      text-align: center;
+    }
+
+    .victory-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ff1744;
+    }
+
+    .victory-label {
+      font-size: 10px;
+      color: #888;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+
+    .restart-btn {
+      padding: 14px 32px;
+      background: linear-gradient(145deg, #e91e63, #ff1744);
+      border: 2px solid #ff5252;
+      border-radius: 30px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 20px;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .restart-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(233, 30, 99, 0.6);
+    }
+
+    /* Coin Animation */
+    .coin-float {
+      position: fixed;
+      pointer-events: none;
+      z-index: 300;
+      font-size: 40px;
+      animation: coin-rise 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+      filter: drop-shadow(0 0 8px #ffd700);
+    }
+
+    @keyframes coin-rise {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5) rotateZ(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(1) rotateZ(360deg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .game-viewport {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+      .question-card {
+        min-height: 150px;
+      }
+      .robot-collection {
+        gap: 10px;
+        flex-wrap: wrap;
+        max-width: 90vw;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <header class="hud-bar">
+    <div class="hud-title" id="gameTitle">
+     🫀 CardioResp Escape
     </div>
-  </main>
-
-  <div class="modal hidden" id="qModal">
-    <div class="card-modal">
-      <div class="card-header">
-        <span class="badge" id="qBadge">Fase 1</span>
-        <button class="close-btn" id="qClose">&times;</button>
-      </div>
-
-      <div class="modal-body-grid">
-        <div class="image-container">
-          <img id="qImg" src="" alt="Diagrama Anatômico"/>
-        </div>
-        <div class="question-content">
-          <h2 id="qTitle">Anatomia</h2>
-          <p id="qPrompt">Carregando pergunta...</p>
-          <div id="qOptions" class="options-grid"></div>
-          <div id="qFeedback" class="feedback-area"></div>
-        </div>
-      </div>
+    <div class="hud-stats">
+     <div class="stat-item"><span>🪙</span> <span id="coinCount">0</span>
+     </div>
+     <div class="stat-item"><span>🤖</span> <span id="robotCount">0</span>/8
+     </div>
     </div>
+   </header>
+   <div class="game-container">
+    <div class="game-viewport" id="gameViewport"></div>
+    <div class="controls-bar"><button id="resetBtn" style="padding: 12px 24px; background: linear-gradient(145deg, #e91e63, #ff1744); border: 2px solid #ff5252; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; font-family: 'Orbitron', sans-serif;">🔄 Reiniciar</button>
+    </div>
+   </div>
+   <div class="robot-collection" id="robotCollection"></div>
+  </div><!-- Question Modal -->
+  <div class="modal" id="questionModal">
+   <div class="modal-content">
+    <div class="modal-header"><span class="modal-title" id="questionBadge">QUESTÃO</span> <button class="modal-close" id="closeQuestion">×</button>
+    </div>
+    <div class="modal-body">
+     <div class="question-image-container" id="imageContainer"><img class="question-image" id="questionImage" alt="Imagem da questão" loading="lazy">
+     </div>
+     <h2 class="question-title" id="questionTitle"></h2>
+     <p class="question-text" id="questionText"></p>
+     <div class="options-list" id="optionsList"></div>
+     <div class="feedback" id="feedbackArea"></div>
+    </div>
+   </div>
+  </div><!-- Video Modal -->
+  <div class="modal" id="videoModal">
+   <div class="modal-content">
+    <div class="modal-header"><span class="modal-title">🎬 PARABÉNS!</span> <button class="modal-close" id="closeVideo">×</button>
+    </div>
+    <div class="modal-body" style="align-items: center;">
+     <h2 class="question-title">Você Juntou Todos os Robôs! 🤖🤖🤖</h2>
+     <p class="question-text" style="margin: 16px 0;">Assistindo vídeo especial...</p>
+     <video id="vPlayer" class="video-player" playsinline muted><source src="https://via.placeholder.com/600x400?text=Video+7s" type="video/mp4">
+     </video>
+    </div>
+   </div>
+  </div><!-- Victory Modal -->
+  <div class="modal" id="victoryModal">
+   <div class="modal-content">
+    <div class="victory-content">
+     <div class="victory-emoji">
+      🎉
+     </div>
+     <h2 class="victory-title">ESCAPOU!</h2>
+     <p style="margin-bottom: 20px; color: #aaa;">Você conquistou todo o conhecimento!</p>
+     <div class="victory-stats">
+      <div class="victory-stat">
+       <div class="victory-value" id="finalCoins">
+        0
+       </div>
+       <div class="victory-label">
+        Moedas
+       </div>
+      </div>
+      <div class="victory-stat">
+       <div class="victory-value" id="finalRobots">
+        0
+       </div>
+       <div class="victory-label">
+        Robôs
+       </div>
+      </div>
+      <div class="victory-stat">
+       <div class="victory-value" id="finalCorrect">
+        0
+       </div>
+       <div class="victory-label">
+        Acertos
+       </div>
+      </div>
+     </div><button class="restart-btn" id="restartBtn">🔄 JOGAR NOVAMENTE</button>
+    </div>
+   </div>
   </div>
+  <script>
+    const defaultConfig = {
+      game_title: '🫀 CardioResp Escape'
+    };
 
-  <div class="modal hidden" id="kModal">
-    <div class="card-modal small-card">
-      <div class="card-header">
-        <span class="badge">SISTEMA DE SEGURANÇA</span>
-        <button class="close-btn" id="kClose">&times;</button>
-      </div>
-      <div class="keypad-display" id="kDisplay">____</div>
-      <div class="keypad-grid" id="kPad">
-        </div>
-      <div class="keypad-hint" id="kHelp">Insira o código obtido nas fases</div>
-    </div>
-  </div>
+    let config = { ...defaultConfig };
 
-  <script src="assets/js/questions.js"></script> <script src="assets/js/main.js"></script>      </body>
+    const QUESTIONS = [
+      {
+        id: "Questão 1 – Mediastino",
+        prompt: "O coração localiza-se predominantemente em qual compartimento do mediastino?",
+        options: ["A) Superior", "B) Anterior", "C) Médio", "D) Posterior", "E) Esquerda"],
+        answer: "C",
+        image: "https://via.placeholder.com/400x300?text=Q1+Mediastino",
+        emoji: "🫀",
+        tip: "💡 O mediastino é dividido em superior, médio, anterior e posterior.",
+        main: true
+      },
+      {
+        id: "Questão 2 – Irrigação",
+        prompt: "A artéria interventricular anterior é ramo direto da:",
+        options: ["A) Cor. Direita", "B) Cor. Esquerda", "C) Circunflexa", "D) Torácica", "E) Aorta"],
+        answer: "B",
+        image: "https://via.placeholder.com/400x300?text=Q2+Coronarias",
+        emoji: "❤️",
+        tip: "💡 Duas coronárias saem da aorta ascendente.",
+        main: true
+      },
+      {
+        id: "Questão 3 – Hilo",
+        prompt: "No hilo pulmonar, a estrutura que se localiza mais posteriormente é:",
+        options: ["A) Artéria", "B) Veias", "C) Brônquio principal", "D) Frênico", "E) Linfonodos"],
+        answer: "C",
+        image: "https://via.placeholder.com/400x300?text=Q3+Hilo",
+        emoji: "🌬️",
+        tip: "💡 Lembre: APV (Artéria, Pulmonar, Veia)",
+        main: true
+      },
+      {
+        id: "Questão 4 – Valvas",
+        prompt: "A valva atrioventricular direita está localizada entre:",
+        options: ["A) AE/VE", "B) VE/Aorta", "C) AD/VD", "D) AD/VCS", "E) VD/Tronco"],
+        answer: "C",
+        image: "https://via.placeholder.com/400x300?text=Q4+Valvas",
+        emoji: "🫀",
+        tip: "💡 Tricúspide = lado direito (3 cúspides)",
+        main: true
+      },
+      {
+        id: "Questão 5 – Pleuras",
+        prompt: "A pleura que reveste diretamente a superfície do pulmão é denominada:",
+        options: ["A) Parietal", "B) Mediastinal", "C) Diafragmática", "D) Visceral", "E) Endotélio"],
+        answer: "D",
+        image: "https://via.placeholder.com/400x300?text=Q5+Pleura",
+        emoji: "🌬️",
+        tip: "💡 Visceral = órgão | Parietal = parede",
+        main: true
+      },
+      {
+        id: "Desafio 1 – Árvore",
+        prompt: "O brônquio principal direito tem maior risco de aspiração porque é:",
+        options: ["A) Longo/Estreito", "B) Curto/Largo/Vertical", "C) Oblíquo", "D) Vertical/Longo"],
+        answer: "B",
+        image: "https://via.placeholder.com/400x300?text=Bonus1+Bronquio",
+        emoji: "🌬️",
+        tip: "💡 Brônquio direito = mais vertical (perigoso)",
+        main: false
+      },
+      {
+        id: "Desafio 2 – Superfícies",
+        prompt: "A face esternocostal (anterior) do coração é formada por:",
+        options: ["A) AE", "B) VE", "C) AD", "D) VD", "E) Tronco"],
+        answer: "D",
+        image: "https://via.placeholder.com/400x300?text=Bonus2+Face",
+        emoji: "🫀",
+        tip: "💡 Esternocostal = frente (esterno + costelas)",
+        main: false
+      },
+      {
+        id: "Desafio 3 – Condução",
+        prompt: "O nó atrioventricular localiza-se anatomicamente:",
+        options: ["A) Teto AD", "B) Septo interatrial", "C) Parede VD", "D) Sulco Ant.", "E) Ápice"],
+        answer: "B",
+        image: "https://via.placeholder.com/400x300?text=Bonus3+NoAV",
+        emoji: "⚡",
+        tip: "💡 Nó AV = guardião entre átrios e ventrículos",
+        main: false
+      }
+    ];
+
+    const gameState = {
+      coins: 0,
+      solved: [],
+      keypadInput: ''
+    };
+
+    const ROBOT_NAMES = ['🤖', '🦾', '🦿', '⚙️', '🔩', '💻', '🎛️', '📡'];
+    const ROBOT_COLORS = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#30cfd0'];
+
+    function init() {
+      setUpElementSdk();
+      createCardGrid();
+      setupEventListeners();
+      updateHUD();
+    }
+
+    function setUpElementSdk() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (cfg) => {
+            config = { ...defaultConfig, ...cfg };
+            document.getElementById('gameTitle').textContent = config.game_title;
+          },
+          mapToCapabilities: () => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['game_title', cfg.game_title || defaultConfig.game_title]
+          ])
+        });
+      }
+    }
+
+    function createCardGrid() {
+      const viewport = document.getElementById('gameViewport');
+      viewport.innerHTML = '';
+
+      QUESTIONS.forEach(q => {
+        const card = document.createElement('div');
+        card.className = `question-card ${q.main ? '' : 'bonus'} ${gameState.solved.includes(q.id) ? 'completed' : ''}`;
+
+        const fallbackEmoji = q.emoji || '❓';
+        card.innerHTML = `
+          <img class="card-image" src="${q.image}" alt="${q.id}" loading="lazy" onerror="this.style.display='none'">
+          <div style="font-size: 24px; min-height: 30px;">${gameState.solved.includes(q.id) ? '✓' : fallbackEmoji}</div>
+          <div class="card-title">${q.id}</div>
+          <div class="card-status">${gameState.solved.includes(q.id) ? '🤖 Completo' : q.main ? 'Principal' : 'Desafio'}</div>
+        `;
+
+        if (!gameState.solved.includes(q.id)) {
+          card.addEventListener('click', () => showQuestion(q));
+        }
+
+        viewport.appendChild(card);
+      });
+    }
+
+    function showQuestion(question) {
+      document.getElementById('questionBadge').textContent = question.id;
+      document.getElementById('questionTitle').textContent = question.id;
+      document.getElementById('questionText').textContent = question.prompt;
+      document.getElementById('questionImage').src = question.image;
+
+      const optionsList = document.getElementById('optionsList');
+      optionsList.innerHTML = '';
+
+      question.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => handleAnswer(question, opt[0]));
+        optionsList.appendChild(btn);
+      });
+
+      document.getElementById('feedbackArea').className = 'feedback';
+      openModal('questionModal');
+    }
+
+    function handleAnswer(question, selectedLetter) {
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(btn => btn.disabled = true);
+
+      const feedback = document.getElementById('feedbackArea');
+      const isCorrect = selectedLetter === question.answer;
+
+      if (isCorrect) {
+        const correctIndex = question.options.findIndex(opt => opt[0] === question.answer);
+        allBtns[correctIndex].classList.add('correct');
+        
+        feedback.className = 'feedback show correct';
+        feedback.innerHTML = `<strong>✓ Correto!</strong><br>Você conquistou um robô! 🤖`;
+
+        gameState.coins += 5;
+        gameState.solved.push(question.id);
+
+        createCoinAnimation();
+        createRobotAnimation(gameState.solved.length - 1);
+        createCardGrid();
+        updateHUD();
+
+        setTimeout(() => {
+          closeModal('questionModal');
+          showRobotTip(question.tip, gameState.solved.length - 1);
+        }, 1500);
+
+        if (gameState.solved.length === 8) {
+          setTimeout(() => showKeypadForVideo(), 3000);
+        }
+      } else {
+        const correctIndex = question.options.findIndex(opt => opt[0] === question.answer);
+        allBtns[correctIndex].classList.add('correct');
+        
+        const selectedIndex = question.options.findIndex(opt => opt[0] === selectedLetter);
+        allBtns[selectedIndex].classList.add('wrong');
+
+        feedback.className = 'feedback show wrong';
+        feedback.innerHTML = `<strong>✗ Incorreto!</strong><br>Tente novamente para ganhar um robô!`;
+
+        setTimeout(() => closeModal('questionModal'), 1500);
+      }
+    }
+
+    function createCoinAnimation() {
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          const coin = document.createElement('div');
+          coin.className = 'coin-float';
+          coin.textContent = '🪙';
+          coin.style.left = (window.innerWidth / 2 + (Math.random() * 200 - 100)) + 'px';
+          coin.style.top = (window.innerHeight / 2 + 100) + 'px';
+          document.body.appendChild(coin);
+          setTimeout(() => coin.remove(), 800);
+        }, i * 60);
+      }
+    }
+
+    function createRobotAnimation(index) {
+      const collection = document.getElementById('robotCollection');
+      const robot = document.createElement('div');
+      robot.className = 'robot-collector';
+      robot.textContent = ROBOT_NAMES[index];
+      robot.style.background = `linear-gradient(135deg, ${ROBOT_COLORS[index]}, ${ROBOT_COLORS[(index + 1) % 8]})`;
+      collection.appendChild(robot);
+    }
+
+    function showRobotTip(tip, robotIndex) {
+      const tipEl = document.createElement('div');
+      tipEl.className = 'robot-tip';
+      tipEl.innerHTML = `<strong>${ROBOT_NAMES[robotIndex]} Robô ${robotIndex + 1}:</strong>${tip}`;
+      document.body.appendChild(tipEl);
+      setTimeout(() => tipEl.remove(), 4000);
+    }
+
+    function showKeypadForVideo() {
+      const keypadModal = document.getElementById('videoModal');
+      openModal('videoModal');
+      
+      const player = document.getElementById('vPlayer');
+      player.play();
+      
+      player.onended = () => {
+        closeModal('videoModal');
+        showVictory();
+      };
+    }
+
+    function showVictory() {
+      document.getElementById('finalCoins').textContent = gameState.coins;
+      document.getElementById('finalRobots').textContent = gameState.solved.length;
+      document.getElementById('finalCorrect').textContent = gameState.solved.length;
+      openModal('victoryModal');
+    }
+
+    function resetGame() {
+      gameState.coins = 0;
+      gameState.solved = [];
+      gameState.keypadInput = '';
+      document.getElementById('robotCollection').innerHTML = '';
+      createCardGrid();
+      updateHUD();
+      closeModal('victoryModal');
+      closeModal('videoModal');
+      closeModal('questionModal');
+    }
+
+    function updateHUD() {
+      document.getElementById('coinCount').textContent = gameState.coins;
+      document.getElementById('robotCount').textContent = gameState.solved.length;
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function setupEventListeners() {
+      document.getElementById('closeQuestion').addEventListener('click', () => closeModal('questionModal'));
+      document.getElementById('closeVideo').addEventListener('click', () => closeModal('videoModal'));
+      document.getElementById('restartBtn').addEventListener('click', resetGame);
+      document.getElementById('resetBtn').addEventListener('click', resetGame);
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cb7e389771bc65f',t:'MTc3MDY4NzUyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
