@@ -1,11 +1,16 @@
 // Estado global do jogo
-let solvedQuestions = 0;
-let unlockedDigits = [];
-const finalCode = ["3", "7", "9", "5", "4"]; // Ordem das fases
+let unlockedDigits = ["_", "_", "_", "_", "_"]; 
+const finalCode = ["3", "7", "9", "5", "4"]; // Ordem das fases definida no projeto
 
 // Função para abrir o modal de questão
 function openQuestion(phaseIndex) {
     const q = window.QUESTIONS[phaseIndex];
+    if (!q) return;
+
+    // Resetar feedback anterior
+    const feedback = document.getElementById('qFeedback');
+    feedback.innerText = "";
+    
     document.getElementById('qBadge').innerText = q.id;
     document.getElementById('qPrompt').innerText = q.prompt;
     document.getElementById('qImg').src = `assets/images/${q.image}`;
@@ -24,45 +29,62 @@ function openQuestion(phaseIndex) {
     document.getElementById('qModal').classList.remove('hidden');
 }
 
-// Validação da resposta e liberação do dígito
+// Validação da resposta e liberação do dígito correspondente
 function checkAnswer(selectedIndex, question, index) {
-    const selectedLetter = String.fromCharCode(65 + selectedIndex); // 0=A, 1=B...
+    const selectedLetter = String.fromCharCode(65 + selectedIndex); 
     const feedback = document.getElementById('qFeedback');
     
     if (selectedLetter === question.answer) {
         feedback.innerText = "✅ " + question.explain;
-        feedback.style.color = "#2ecc71";
+        feedback.className = "feedback success";
         
-        if (question.main && !unlockedDigits.includes(finalCode[index])) {
-            unlockedDigits.push(finalCode[index]);
+        // Libera o dígito específico daquela fase na posição correta
+        if (question.main) {
+            unlockedDigits[index] = finalCode[index];
             updateHUD();
         }
     } else {
-        feedback.innerText = "❌ Tente novamente! Analise a anatomia na imagem.";
-        feedback.style.color = "#e74c3c";
+        feedback.innerText = "❌ Tente novamente! Revise os conceitos anatômicos.";
+        feedback.className = "feedback error";
     }
 }
 
-// Atualiza o HUD com o código que o aluno vai descobrindo
+// Atualiza o HUD com o progresso visual do código
 function updateHUD() {
     const hud = document.getElementById('hud');
-    hud.innerText = `Dígitos encontrados: ${unlockedDigits.join(" ")}`;
+    hud.innerText = `Código de Escape: ${unlockedDigits.join(" ")}`;
 }
 
-// Lógica do Teclado da Porta
+// Lógica do Teclado da Porta (Integrado ao kModal)
 let currentInput = "";
 function pressKey(num) {
+    const display = document.getElementById('kDisplay');
+    
     if (currentInput.length < 5) {
         currentInput += num;
-        document.getElementById('kDisplay').innerText = currentInput.padEnd(5, "_");
+        display.innerText = currentInput.padEnd(5, "_");
     }
     
-    if (currentInput === finalCode.join("")) {
-        alert("🎉 Parabéns! Você dominou o sistema cardiorrespiratório e escapou!");
-        location.reload(); 
-    } else if (currentInput.length === 5) {
-        currentInput = ""; // Reseta se errar
-        document.getElementById('kDisplay').innerText = "ERRO";
-        setTimeout(() => document.getElementById('kDisplay').innerText = "_____", 1000);
+    if (currentInput.length === 5) {
+        if (currentInput === finalCode.join("")) {
+            display.style.color = "#2ecc71";
+            display.innerText = "OPEN";
+            setTimeout(() => {
+                alert("🎉 Missão Cumprida! Você dominou o sistema cardiorrespiratório.");
+                location.reload();
+            }, 500);
+        } else {
+            display.style.color = "#e74c3c";
+            display.innerText = "ERROR";
+            currentInput = "";
+            setTimeout(() => {
+                display.style.color = "#fff";
+                display.innerText = "_____";
+            }, 1000);
+        }
     }
 }
+
+// Fechar Modais
+document.getElementById('qClose').onclick = () => document.getElementById('qModal').classList.add('hidden');
+document.getElementById('kClose').onclick = () => document.getElementById('kModal').classList.add('hidden');
